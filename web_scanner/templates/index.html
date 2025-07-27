@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Web Vulnerability Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body>
+    <div id="dvbody" class="dvbody">
+        <div class="row">
+            <div class="col-10" style="margin: auto;">
+                <h1 class="mb-2">🛡️ Web Vulnerability Scanner</h1>
+                <form method="POST">
+                    <input class="form-control form-control-sm mb-2" name="url" placeholder="Enter website URL"
+                        required>
+                    <button class="btn btn-primary btn-sm" type="submit">Scan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% if results %}
+    <h2>Results for: {{ results.url }}</h2>
+
+    <h3>XSS:</h3>
+    <ul>
+        {% for x in results.xss %}
+        <li>{{ x.url }} - {{ x.payload }}</li>
+        {% endfor %}
+        {% if not results.xss %}<li>✅ No XSS found.</li>{% endif %}
+    </ul>
+
+    <h3>SQLi:</h3>
+    <ul>
+        {% for s in results.sqli %}
+        <li>{{ s.url }} - {{ s.payload }}</li>
+        {% endfor %}
+        {% if not results.sqli %}<li>✅ No SQLi found.</li>{% endif %}
+    </ul>
+
+    <h3>Broken Access Control:</h3>
+    <ul>
+        {% for a in results.access %}
+        <li>⚠️ {{ a }}</li>
+        {% endfor %}
+        {% if not results.access %}<li>✅ No exposed admin pages found.</li>{% endif %}
+    </ul>
+
+    <h3>Security Headers:</h3>
+    <ul>
+        {% for h in results.headers %}
+        <li>⚠️ {{ h }}</li>
+        {% endfor %}
+        {% if not results.headers %}<li>✅ All recommended headers present.</li>{% endif %}
+    </ul>
+    {% endif %}
+</body>
+
+</html>
